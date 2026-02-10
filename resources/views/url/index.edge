@@ -1,0 +1,67 @@
+{{-- resources/views/url/index.edge (fragment partiel)
+   Objectif pédagogique :
+   - Montrer un formulaire minimal pour soumettre une URL
+   - Montrer un conteneur d'aperçu qui sera remplacé par `result` envoyé
+
+   Instructions pour l'apprenant (pas de modifications automatiques) :
+   1) Dans le controller `UrlController.store`, vous devez :
+      - Récupérer la valeur envoyée par le formulaire via `request.input('url')`.
+      - Valider/laver l'URL et générer le slug.
+      - Construire un objet `result` contenant au minimum :
+          { originalUrl, shortUrl, slug, qrImageUrl }
+      - Rendre la vue et passer `result` : `return view.render('url.index', { result })`
+
+   2) Formulaire HTML (à implémenter vous-même) :
+      - `action` : mettre l'URL de la route qui traite la requête (ex : `/shorten`).
+      - `method` : `POST`.
+      - `name` de l'input : `url` (correspondra à `request.input('url')`).
+      - Ajoutez `@csrf` si vous utilisez la protection CSRF d'Adonis.
+
+   3) Import / include de ce fragment :
+      - Pour inclure ce fichier depuis une autre view : `@include('url/index')`.
+      - Si vous déplacez ce fragment dans `resources/views/components/url-form.edge`, utilisez
+        `@include('components/url-form')`.
+      - Voir la doc Adonis sur les views pour plus d'exemples : https://docs.adonisjs.com/guides/views
+
+   Exemple minimal (ceci est un exemple didactique, ne pas remplir automatiquement) :
+      <form action="/shorten" method="POST">
+        @csrf
+        <!-- input name devrait être "url" -->
+        <input name="url" type="url" placeholder="Collez l'URL à raccourcir" required />
+        <button type="submit">Raccourcir</button>
+      </form>
+
+   Lorsque votre controller renvoie `result`, vous pouvez afficher les valeurs ainsi :
+      @if(result)
+        <div>Original : {{ result.originalUrl }}</div>
+        <div>Courte  : <a href="{{ result.shortUrl }}">{{ result.shortUrl }}</a></div>
+        <!-- afficher `result.qrImageUrl` si disponible -->
+      @endif
+--}}
+
+<div class="card" style="margin-bottom:12px">
+  <h2>Raccourcir une URL</h2>
+
+  <!-- Formulaire d'exemple (laisser vide dans le fichier si vous voulez que l'apprenant le remplisse). -->
+  <form action="/shorten" method="POST" class="row" style="align-items:center">
+  <!-- ici mettre la methode csrfField pour indiqué que la requête est interne à l'application -->
+
+    <input name="url" type="url" placeholder="Collez l'URL à raccourcir" required />
+    <button type="submit">Raccourcir</button>
+  </form>
+
+  <!-- Aperçu statique (exemple) : remplacez par `result` renvoyé par le controller. -->
+  <div class="result">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div class="muted">URL</div>
+        <div>https://www.exemple.com/articles/long-article</div>
+      </div>
+
+      <div style="display:flex;align-items:center">
+        <div class="muted">Raccourci</div>
+        <div class="short">https://sho.rt/abcd12</div>
+      </div>
+    </div>
+  </div>
+</div>

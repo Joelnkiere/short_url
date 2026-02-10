@@ -1,0 +1,94 @@
+{{-- resources/views/url/list.edge (fragment partiel)
+   Objectif pédagogique :
+   - Montrer comment afficher une liste d'URLs raccourcies fournie par le controller.
+
+   Contrat attendu du controller (`UrlController,index`) :
+   - Doit retourner une vue avec une variable `urls` qui est un tableau d'objets.
+   - Chaque objet doit contenir au minimum :
+       { originalUrl, shortUrl, slug, qrImageUrl, createdAt, clicks }
+
+   Exemple :
+     const urls = [
+       { originalUrl: 'https://ex.com/1', shortUrl: 'https://sho.rt/aa11', slug: 'aa11', qrImageUrl: '/qrs/aa11.png', createdAt: '2026-02-09', clicks: 3 }
+     ]
+     return view.render('url.list', { urls })
+
+   Affichage dans la view (instructions pas-à-pas) :
+   1) Vérifier la présence de données : `@if(urls && urls.length)`
+   2) Boucler sur les éléments : `@each(url in urls)` puis `@endeach`
+   3) Pour chaque `url` afficher : `{{ url.originalUrl }}`, `{{ url.shortUrl }}`, etc.
+--}}
+
+<div class="card">
+  <h2>Listes des Urls raccourcies (exemples: remplacer par des vraies données et enlèver ce texte d'exemple)</h2>
+
+  <!-- Exemples statiques (toujours visibles pour le démarrage de l'Exercice) -->
+  <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
+    <div style="flex:1">
+      <div><strong>https://www.exemple.com/long-url-1</strong></div>
+      <div class="muted">Créée le 2026-02-09 • slug: abcd12</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div><a href="https://short.ly/abcd12">https://short.ly/abcd12</a></div>
+      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div>
+      <!-- Formulaire de suppression exemple (statique) :
+           - Remplacez <votre_chemin_de_suppression> par la route choisie.
+           - Ajoutez @csrf dans votre implémentation réelle.
+      -->
+      <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0;display:inline-block">
+        <input type="hidden" name="_method" value="DELETE" />
+        <input type="hidden" name="slug" value="abcd12" />
+        <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;margin-left:8px">Supprimer</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
+    <div style="flex:1">
+      <div><strong>https://www.exemple.com/another-long-url</strong></div>
+      <div class="muted">Créée le 2026-02-08 • slug: z9x8w7</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div><a href="https://short.ly/z9x8w7">https://short.ly/z9x8w7</a></div>
+      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div>
+      <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0;display:inline-block">
+        <input type="hidden" name="_method" value="DELETE" />
+        <input type="hidden" name="slug" value="z9x8w7" />
+        <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;margin-left:8px">Supprimer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Exemple d'itération (pédagogique) -->
+  @if(urls && urls.length)
+    @each(url in urls)
+      <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
+        <div style="flex:1">
+          <div><strong>{{ url.originalUrl }}</strong></div>
+          <div class="muted">Créée le {{ url.createdAt }} • slug: {{ url.slug }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div><a href="{{ url.shortUrl }}">{{ url.shortUrl }}</a></div>
+          <!-- Formulaire de suppression :
+               - Remplacez `<votre_chemin_de_suppression>` par le chemin que vous avez choisi
+               - Utiliser `method="POST"` + champ caché `_method=DELETE` est courant pour simuler DELETE
+               - IMPORTANT : ajoutez `@csrf` ici dans votre implémentation réelle. Pourquoi ?
+                 Le champ CSRF protège contre les requêtes malveillantes depuis d'autres sites.
+                 Nous n'insérons pas `@csrf` automatiquement ici pour encourager l'apprenant
+                 à comprendre et l'ajouter au bon endroit.
+               - Le controller devra implémenter `destroy`/`delete` et correspondre à la route définie
+          -->
+          <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0">
+            <input type="hidden" name="_method" value="DELETE" />
+            <input type="hidden" name="slug" value="{{ url.slug }}" />
+            <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px">Supprimer</button>
+          </form>
+        </div>
+      </div>
+    @endeach
+  @else
+    <div class="muted">Aucun URL raccourci pour le moment.</div>
+  @endif
+
+  <div style="margin-top:12px" class="muted">Remplacez le code ci‑dessus par votre implémentation si nécessaire. Assurez-vous que le `action` du formulaire de suppression correspond à la route définie.</div>
+</div>

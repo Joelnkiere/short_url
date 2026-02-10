@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Exercice — Raccourcisseur d'URL</title>
+    <style>
+      body{font-family:Inter, sans-serif;background:#f7fafc;margin:0;padding:28px}
+      .container{max-width:760px;margin:0 auto}
+      .card{background:#fff;padding:18px;border-radius:8px}
+      .row{display:flex;gap:8px}
+      input{flex:1;padding:10px;border-radius:6px;border:1px solid #e5e7eb}
+      button{background:#2b6cb0;color:#fff;padding:10px 12px;border-radius:6px;border:none}
+      .result{margin-top:14px;padding:12px;background:#f8fafc;border-radius:6px}
+      .muted{color:#6b7280;font-size:13px}
+      .short{font-weight:600;color:#2b6cb0;margin-left:8px}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="margin-bottom:12px">Exercice : Raccourcisseur d'URL</h1>
+      <!-- Inclure le formulaire et le listing simplifiés explication des composant et
+        importation avec @include: voir le fichier index.edge qui explique ce que
+        c'est mais vous n'avez pas besoin de touché à ça, juste comprendre la notion des
+         composants et importations des composants -->
+      @include('url/index')
+      @include('url/list')
+      <p class="muted" style="margin-top:12px">Remplacez les exemples par vos données depuis le controller. Les includes ci‑dessus montrent comment réutiliser des composants situés dans resources/views/url/.</p>
+    </div>
+  </body>
+</html>
+
