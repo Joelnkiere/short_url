@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gestion des URLs</title>
+    <style>
+      body{font-family:Inter, sans-serif;background:#f7fafc;margin:0;padding:28px}
+      .container{max-width:900px;margin:0 auto;display:flex;gap:24px}
+      .main{flex:2}
+      .sidebar{flex:1}
+      .card{background:#fff;padding:18px;border-radius:8px}
+      .row{display:flex;gap:8px}
+      input{flex:1;padding:10px;border-radius:6px;border:1px solid #e5e7eb}
+      button{background:#2b6cb0;color:#fff;padding:10px 12px;border-radius:6px;border:none}
+      .muted{color:#6b7280;font-size:13px}
+      a{color:#2b6cb0;text-decoration:none}
+      .qr img{border-radius:6px}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main">
+        <h2>Redirection rapide</h2>
+        @if(result)
+          <div class="card" style="margin-bottom:12px">
+            <div><strong>Nouvelle URL raccourcie :</strong></div>
+            <div>Originale : {{ result.originalUrl }}</div>
+            <div>Raccourci : <a href="{{ result.shortUrl }}">{{ result.shortUrl }}</a></div>
+            <div style="margin-top:8px"><img src="{{ result.qrImageUrl }}" alt="QR code" /></div>
+          </div>
+        @endif
+        @if(success)
+          <div class="card" style="background:#e6fffa;color:#2c7a7b;margin-bottom:12px">
+            {{ success }}
+          </div>
+        @endif
+        @if(errors)
+          <div class="card" style="background:#ffe6e6;color:#c53030;margin-bottom:12px">
+            <ul>
+              @each(err in Object.values(errors))
+                <li>{{ err }}</li>
+              @endeach
+            </ul>
+          </div>
+        @endif
+        <form action="/admin" method="GET" class="row" style="align-items:center">
+          <input name="slug" type="text" placeholder="Entrez la phrase à encoder" autocomplete="off" />
+          <button type="submit">Envoyer le mot-clé</button>
+        </form>
+        <p class="muted" style="margin-top:12px">Tapez un shortcode et vous serez redirigé vers l'URL originale.</p>
+      </div>
+
+      <aside class="sidebar">
+        @include('url/list')
+      </aside>
+    </div>
+  </body>
+</html>

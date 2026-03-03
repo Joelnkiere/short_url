@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Exercice — Raccourcisseur d'URL</title>
+    <style>
+      body{font-family:Inter, sans-serif;background:#f7fafc;margin:0;padding:28px}
+      .container{max-width:760px;margin:0 auto}
+      .card{background:#fff;padding:18px;border-radius:8px}
+      .row{display:flex;gap:8px}
+      input{flex:1;padding:10px;border-radius:6px;border:1px solid #e5e7eb}
+      button{background:#2b6cb0;color:#fff;padding:10px 12px;border-radius:6px;border:none}
+      .result{margin-top:14px;padding:12px;background:#f8fafc;border-radius:6px}
+      .muted{color:#6b7280;font-size:13px}
+      .short{font-weight:600;color:#2b6cb0;margin-left:8px}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="margin-bottom:12px">Exercice : Raccourcisseur d'URL</h1>
+      <!-- formulaire de raccourcissement uniquement -->
+      @include('url/index')
+
+      <!-- afficher un message d'erreur ou le résultat si la route l'a flashé -->
+      @if(errors)
+        <div class="card" style="margin-top:12px;color:#ef4444">
+          <ul>
+            @each(err in Object.values(errors))
+              <li>{{ err }}</li>
+            @endeach
+          </ul>
+        </div>
+      @endif
+
+      @if(result)
+        <div class="card result" style="margin-top:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div class="muted">URL originale</div>
+              <div>{{ result.originalUrl }}</div>
+            </div>
+
+            <div style="display:flex;align-items:center">
+              <div class="muted">Raccourci</div>
+              <div class="short"><a href="{{ result.shortUrl }}">{{ result.shortUrl }}</a></div>
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <div class="muted">QR code</div>
+            <div><img src="{{ result.qrImageUrl }}" alt="QR code" /></div>
+          </div>
+        </div>
+      @endif
+
+      <p class="muted" style="margin-top:12px">Après l'envoi, vous serez redirigé vers la page de gestion (/admin) qui contient le formulaire de recherche et la liste des URLs.</p>
+    </div>
+  </body>
+</html>
+
