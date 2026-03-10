@@ -24,38 +24,40 @@
 
   <!-- Exemples statiques (toujours visibles pour le démarrage de l'Exercice) -->
   <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
-    <div style="flex:1">
+    {{-- <div style="flex:1">
       <div><strong>https://www.exemple.com/long-url-1</strong></div>
       <div class="muted">Créée le 2026-02-09 • slug: abcd12</div>
-    </div>
+    </div> --}}
     <div style="display:flex;align-items:center;gap:12px">
-      <div><a href="https://short.ly/abcd12">https://short.ly/abcd12</a></div>
-      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div>
+      {{-- <div><a href="https://short.ly/abcd12">https://short.ly/abcd12</a></div>
+      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div> --}}
       <!-- Formulaire de suppression exemple (statique) :
            - Remplacez <votre_chemin_de_suppression> par la route choisie.
            - Ajoutez @csrf dans votre implémentation réelle.
       -->
-      <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0;display:inline-block">
+      {{-- <form action="urls" method="POST" style="margin:0;display:inline-block">
+       {{ csrfField() }}
         <input type="hidden" name="_method" value="DELETE" />
         <input type="hidden" name="slug" value="abcd12" />
         <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;margin-left:8px">Supprimer</button>
-      </form>
+      </form> --}}
     </div>
   </div>
 
   <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
     <div style="flex:1">
-      <div><strong>https://www.exemple.com/another-long-url</strong></div>
+      {{--  <div><strong>https://www.exemple.com/another-long-url</strong></div>
       <div class="muted">Créée le 2026-02-08 • slug: z9x8w7</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       <div><a href="https://short.ly/z9x8w7">https://short.ly/z9x8w7</a></div>
-      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div>
-      <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0;display:inline-block">
+      <div class="qr" style="width:48px;height:48px;background:#eef2ff;border-radius:6px">QR</div>  --}}
+      {{-- <form action="urls" method="POST" style="margin:0;display:inline-block">
+        {{ csrfField() }}
         <input type="hidden" name="_method" value="DELETE" />
         <input type="hidden" name="slug" value="z9x8w7" />
         <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;margin-left:8px">Supprimer</button>
-      </form>
+      </form> --}}
     </div>
   </div>
 
@@ -68,17 +70,15 @@
           <div class="muted">Créée le {{ url.createdAt }} • slug: {{ url.slug }}</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-          <div><a href="{{ url.shortUrl }}">{{ url.shortUrl }}</a></div>
-          <!-- Formulaire de suppression :
-               - Remplacez `<votre_chemin_de_suppression>` par le chemin que vous avez choisi
-               - Utiliser `method="POST"` + champ caché `_method=DELETE` est courant pour simuler DELETE
-               - IMPORTANT : ajoutez `@csrf` ici dans votre implémentation réelle. Pourquoi ?
-                 Le champ CSRF protège contre les requêtes malveillantes depuis d'autres sites.
-                 Nous n'insérons pas `@csrf` automatiquement ici pour encourager l'apprenant
-                 à comprendre et l'ajouter au bon endroit.
-               - Le controller devra implémenter `destroy`/`delete` et correspondre à la route définie
-          -->
-          <form action="<votre_chemin_de_suppression>" method="POST" style="margin:0">
+          <div>
+            <a href="{{ url.shortUrl }}">{{ url.shortUrl }}</a>
+            <div class="muted">Clics : {{ url.clicks }}</div>
+          </div>
+          <div class="qr" style="flex-shrink:0">
+            <img src="{{ url.qrImageUrl }}" alt="QR {{ url.slug }}" style="width:48px;height:48px;border-radius:6px" />
+          </div>
+          <form action="/urls/{{ url.slug }}" method="POST" style="margin:0">
+             {{ csrfField() }}
             <input type="hidden" name="_method" value="DELETE" />
             <input type="hidden" name="slug" value="{{ url.slug }}" />
             <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px">Supprimer</button>

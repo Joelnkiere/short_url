@@ -29,7 +29,13 @@
       @endif
 
       <form action="/urls/{{ url.slug }}" method="POST" class="row" style="align-items:center">
-        @csrf
+          {{ csrfField() }}
+          <input type="hidden" name="_method" value="PUT" />
+          {{-- @csrf --- IGNORE ---
+          <input type="hidden" name="_method" value="PUT" /> --- IGNORE --- --}}
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <label>URL originale</label>
+            <input name="originalUrl" type="url" required value="{{ old?.originalUrl ?? url.originalUrl }}" />
         <input type="hidden" name="_method" value="PUT" />
         <div style="flex:1;display:flex;flex-direction:column;gap:8px">
           <label>URL originale</label>

@@ -50,8 +50,10 @@ import router from '@adonisjs/core/services/router'
 */
 
 router.get('/', [UrlController, 'showForm'])
+router.get('/qrcodes/:slug', [UrlController, 'qrCode'])
 router.post('/shorten', [UrlController, 'store'])
 router.get('/urls', [UrlController, 'index'])
+router.post('/urls/:slug', [UrlController, 'destroy'])
 router.get('/:slug', [UrlController, 'redirect'])
 router.delete('/urls/:slug', [UrlController, 'destroy'])
 

@@ -100,6 +100,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Url from '#models/url'
 import generateSlug from '../helpers/generateSlug.js'
+import QRCode from 'qrcode'
 
 export default class UrlController {
   /**
@@ -141,6 +142,7 @@ export default class UrlController {
       originalUrl: url.originalUrl,
       shortUrl,
       slug: url.shortCode,
+      qrImageUrl: `/qrcodes/${slug}`,
     }
 
     // On utilise la session pour passer le résultat à la page suivante (flash message)
@@ -158,7 +160,9 @@ export default class UrlController {
     const formattedUrls = urls.map((url) => {
       return {
         ...url.toJSON(),
+        slug: url.shortCode,
         shortUrl: `/${url.shortCode}`,
+        qrImageUrl: `/qrcodes/${url.shortCode}`,
       }
     })
 
@@ -192,6 +196,27 @@ export default class UrlController {
       await url.delete()
     }
 
-    return response.redirect().toPath('/admin')
+    return response.redirect().toPath('/urls')
+  }
+
+  /**
+   * Génère et renvoie l'image QR code pour une URL courte
+   */
+  public async qrCode({ params, request, response }: HttpContext) {
+    const url = await Url.findBy('shortCode', params.slug)
+
+    if (!url) {
+      return response.notFound('URL non trouvée')
+    }
+
+    const shortUrl = `${request.protocol()}://${request.host()}/${url.shortCode}`
+
+    try {
+      const buffer = await QRCode.toBuffer(shortUrl, { width: 256, margin: 2 })
+      return response.type('image/png').send(buffer)
+    } catch (err) {
+      console.error('Erreur génération QR:', err)
+      return response.internalServerError('Impossible de générer le QR code')
+    }
   }
 }

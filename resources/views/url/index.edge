@@ -25,7 +25,7 @@
 
    Exemple minimal (ceci est un exemple didactique, ne pas remplir automatiquement) :
       <form action="/shorten" method="POST">
-        @csrf
+
         <!-- input name devrait être "url" -->
         <input name="url" type="url" placeholder="Collez l'URL à raccourcir" required />
         <button type="submit">Raccourcir</button>
@@ -45,7 +45,7 @@
   <!-- Formulaire d'exemple (laisser vide dans le fichier si vous voulez que l'apprenant le remplisse). -->
   <form action="/shorten" method="POST" class="row" style="align-items:center">
   <!-- ici mettre la methode csrfField pour indiqué que la requête est interne à l'application -->
-
+    {{ csrfField() }}
     <input name="url" type="url" placeholder="Collez l'URL à raccourcir" required />
     <button type="submit">Raccourcir</button>
   </form>

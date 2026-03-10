@@ -27,7 +27,9 @@
             <div><strong>Nouvelle URL raccourcie :</strong></div>
             <div>Originale : {{ result.originalUrl }}</div>
             <div>Raccourci : <a href="{{ result.shortUrl }}">{{ result.shortUrl }}</a></div>
-            <div style="margin-top:8px"><img src="{{ result.qrImageUrl }}" alt="QR code" /></div>
+            @if(result.qrImageUrl)
+            <div class="qr" style="margin-top:8px"><img src="{{ result.qrImageUrl }}" alt="QR code" style="width:128px;height:128px" /></div>
+            @endif
           </div>
         @endif
         @if(success)
@@ -44,8 +46,10 @@
             </ul>
           </div>
         @endif
-        <form action="/admin" method="GET" class="row" style="align-items:center">
-          <input name="slug" type="text" placeholder="Entrez la phrase à encoder" autocomplete="off" />
+        <form action="/urls" method="GET" class="row" style="align-items:center">
+        {{ csrfField() }}
+           <input name="slug" type="text" placeholder="Entrez le shortcode à rechercher" autocomplete="off" />
+
           <button type="submit">Envoyer le mot-clé</button>
         </form>
         <p class="muted" style="margin-top:12px">Tapez un shortcode et vous serez redirigé vers l'URL originale.</p>
