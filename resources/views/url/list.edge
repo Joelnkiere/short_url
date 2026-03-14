@@ -67,7 +67,12 @@
       <div class="row-item" style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
         <div style="flex:1">
           <div><strong>{{ url.originalUrl }}</strong></div>
-          <div class="muted">Créée le {{ url.createdAt }} • slug: {{ url.slug }}</div>
+          <div class="muted">
+            Créée le {{ url.createdAt }} • slug: {{ url.slug }}
+            @if(url.userName)
+              • Créateur: {{ url.userName }} ({{ url.userEmail }})
+            @endif
+          </div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
           <div>

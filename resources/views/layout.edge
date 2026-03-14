@@ -23,7 +23,28 @@
          ce layout comme référence visuelle. -->
 
     <main>
+      <!-- Authentication Navigation -->
+      <nav style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
+        @if(auth.isAuthenticated)
+          <span style="color:var(--muted)">Bienvenue, {{ auth.user.name }}</span>
+          <a href="{{ route('/urls') }}" style="color:var(--accent)">Mes URLs</a>
+          
+          @if(auth.user.role && auth.user.role.name === 'ADMIN')
+            <a href="{{ route('/admin') }}" style="color:var(--accent); font-weight:bold;">Administration</a>
+          @endif
+
+          <form method="POST" action="{{ route('/logout') }}" style="display:inline">
+            {{ csrfField() }}
+            <button type="submit" style="background:none;border:none;color:var(--accent);cursor:pointer;padding:0;font-size:14px">Déconnexion</button>
+          </form>
+        @else
+          <a href="{{ route('/login') }}" style="color:var(--accent)">Connexion</a>
+          <a href="{{ route('/register') }}" style="color:var(--accent)">Inscription</a>
+        @end
+      </nav>
+
       <!-- Page content -->
+      {{{ await $slots.main() }}}
     </main>
 
     <footer class="muted" style="margin-top:18px">Remplacez les exemples par vos données dans les views fournies.</footer>

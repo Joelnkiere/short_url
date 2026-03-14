@@ -103,18 +103,7 @@ import generateSlug from '../helpers/generateSlug.js'
 import QRCode from 'qrcode'
 
 export default class UrlController {
-  /**
-   * Affiche le formulaire
-   */
-  public async showForm({ view, session }: HttpContext) {
-    const result = session.get('result')
-    return view.render('pages/home', { result })
-  }
-
-  /**
-   * Traite le formulaire POST pour raccourcir l'URL
-   */
-  public async store({ request, response, session }: HttpContext) {
+  public async store({ request, response, session, auth }: HttpContext) {
     let originalUrl = request.input('url')
 
     if (!originalUrl) {
@@ -129,11 +118,12 @@ export default class UrlController {
     // Génération d'un slug unique de 6 caractères
     const slug = generateSlug(6)
 
-    // Création en base de données
+    // Création en base de données avec l'utilisateur connecté
     const url = await Url.create({
       originalUrl,
       shortCode: slug,
       clicks: 0,
+      userId: auth.user!.id,
     })
 
     // Construction du résultat pour l'affichage
@@ -147,22 +137,43 @@ export default class UrlController {
 
     // On utilise la session pour passer le résultat à la page suivante (flash message)
     session.flash('result', result)
-    return response.redirect().back()
+    return response.redirect().toPath('/urls')
   }
 
-  /**
-   * Liste toutes les URLs (Page Admin)
-   */
-  public async index({ view }: HttpContext) {
-    const urls = await Url.all()
+  public async index({ view, auth, session }: HttpContext) {
+    await auth.user!.load('role') // Load the role relationship
+    const urls = await Url.query().where('userId', auth.user!.id)
+    const result = session.get('result')
 
-    // On transforme les données pour ajouter l'URL courte complète
     const formattedUrls = urls.map((url) => {
       return {
         ...url.toJSON(),
         slug: url.shortCode,
         shortUrl: `/${url.shortCode}`,
         qrImageUrl: `/qrcodes/${url.shortCode}`,
+      }
+    })
+
+    return view.render('pages/home', { urls: formattedUrls, result, userRole: auth.user!.role.name })
+  }
+
+  public async adminIndex({ view, auth, response }: HttpContext) {
+    await auth.user!.load('role')
+    
+    if (auth.user!.role.name !== 'ADMIN') {
+      return response.redirect('/urls')
+    }
+
+    const urls = await Url.query().preload('user')
+
+    const formattedUrls = urls.map((url) => {
+      return {
+        ...url.toJSON(),
+        slug: url.shortCode,
+        shortUrl: `/${url.shortCode}`,
+        qrImageUrl: `/qrcodes/${url.shortCode}`,
+        userName: url.user.name,
+        userEmail: url.user.email,
       }
     })
 
@@ -189,8 +200,11 @@ export default class UrlController {
   /**
    * Supprime une URL
    */
-  public async destroy({ params, response }: HttpContext) {
-    const url = await Url.findBy('shortCode', params.slug)
+  public async destroy({ params, response, auth }: HttpContext) {
+    const url = await Url.query()
+      .where('shortCode', params.slug)
+      .where('userId', auth.user!.id)
+      .first()
 
     if (url) {
       await url.delete()

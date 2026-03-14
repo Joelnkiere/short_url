@@ -2,11 +2,11 @@ import  Url  from '#models/url';
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column,hasMany} from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 
-// import Role from '#models/role'
+import Role from '#models/role'
 // import Actualite from '#models/actualite'
 // import Module from '#models/module'
 // import Adress from '#models/adress'
@@ -18,8 +18,8 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
-  //  @hasOne(() => Role)
-  // declare role: HasOne<typeof Role>
+  @hasOne(() => Role)
+  declare role: HasOne<typeof Role>
   @hasMany(()=>Url)
   declare urls:HasMany<typeof Url>
   //  @manyToMany(()=>Module,{pivotTable:'users_modules'})

@@ -11,6 +11,7 @@
 import UrlController from '#controllers/ul_controller'
 import UsersController from '#controllers/users_controller'
 import router from '@adonisjs/core/services/router'
+import { middleware } from './kernel.js'
 // import UrlController from '#Controllers/Http/UrlController'
 
 // router.on('/').render('pages/home')
@@ -49,20 +50,29 @@ import router from '@adonisjs/core/services/router'
    chaque route.
 */
 
-router.get('/', [UrlController, 'showForm'])
-router.get('/qrcodes/:slug', [UrlController, 'qrCode'])
-router.post('/shorten', [UrlController, 'store'])
-router.get('/urls', [UrlController, 'index'])
-router.post('/urls/:slug', [UrlController, 'destroy'])
-router.get('/:slug', [UrlController, 'redirect'])
-router.delete('/urls/:slug', [UrlController, 'destroy'])
+router.get('/', async ({ auth, response }) => {
+  await auth.check()
+  if (auth.isAuthenticated) {
+    return response.redirect('/urls')
+  }
+  return response.redirect('/login')
+})
 
-router.get("/register",[UsersController,'showRegister'])
-router.post("/users",[UsersController,'store'])
-router.get("/login",[UsersController,'showLogin'])
-router.post("/login",[UsersController,'login'])
+router.get('/admin', [UrlController, 'adminIndex']).use(middleware.auth())
+
+router.get('/register', [UsersController, 'showRegister']).use(middleware.guest())
+router.post('/users', [UsersController, 'store']).use(middleware.guest())
+router.get('/login', [UsersController, 'showLogin']).use(middleware.guest())
+router.post('/login', [UsersController, 'login']).use(middleware.guest())
+router.post('/logout', [UsersController, 'logout']).use(middleware.auth())
+
+router.get('/qrcodes/:slug', [UrlController, 'qrCode'])
+router.post('/shorten', [UrlController, 'store']).use(middleware.auth())
+router.get('/urls', [UrlController, 'index']).use(middleware.auth())
+router.delete('/urls/:slug', [UrlController, 'destroy']).use(middleware.auth())
+
+router.get('/:slug', [UrlController, 'redirect'])
 
 // édition / mise à jour d'une URL existante
 // router.get('/urls/:slug/edit', [UrlController, 'edit'])
 // router.put('/urls/:slug', [UrlController, 'update'])
-
